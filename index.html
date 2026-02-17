@@ -6,27 +6,41 @@
     <title>Post-it Board</title>
     <style>
         * { -webkit-tap-highlight-color: none; }
-        body { margin: 0; background: #7a4a1e; overflow: hidden; font-family: sans-serif; }
+        body { margin: 0; background: #7a4a1e; overflow: hidden; font-family: sans-serif; transition: background 0.3s; }
         #board { width: 100vw; height: 100vh; position: relative; }
         
         .note {
             position: absolute;
-            width: 110px; height: 110px;
             padding: 8px;
-            font-size: 10px;
             box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
             display: table;
             word-break: break-word;
             border-radius: 2px;
+            transition: all 0.3s;
         }
         .note > span { display: table-cell; vertical-align: middle; text-align: center; }
         
-        .yellow { background: #fef3bd; }
-        .pink { background: #ffd1dc; }
-        .blue { background: #cce5ff; }
-        .green { background: #d4edda; }
-        .lavender { background: #e6e6fa; }
-        .peach { background: #ffe5d9; }
+        /* Color schemes */
+        .note.yellow { background: #fef3bd; }
+        .note.pink { background: #ffd1dc; }
+        .note.blue { background: #cce5ff; }
+        .note.green { background: #d4edda; }
+        .note.lavender { background: #e6e6fa; }
+        .note.peach { background: #ffe5d9; }
+        
+        /* Dark scheme */
+        body.dark .note.yellow { background: #8B8B4B; color: #fff; }
+        body.dark .note.pink { background: #8B4B5B; color: #fff; }
+        body.dark .note.blue { background: #4B5B8B; color: #fff; }
+        body.dark .note.green { background: #4B8B5B; color: #fff; }
+        body.dark .note.lavender { background: #5B5B8B; color: #fff; }
+        body.dark .note.peach { background: #8B6B4B; color: #fff; }
+        
+        /* Pastel scheme */
+        body.pastel .note { opacity: 0.85; }
+        
+        /* Bright scheme */
+        body.bright .note { box-shadow: 4px 4px 8px rgba(0,0,0,0.5); }
         
         .note .del { display: none; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: #e74c3c; color: white; border: none; border-radius: 50%; font-size: 10px; line-height: 16px; text-align: center; cursor: pointer; }
         .note.admindel .del { display: block; }
@@ -37,7 +51,7 @@
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
         .modal.on { display: flex; }
         
-        .modalbox { background: white; padding: 14px; border-radius: 10px; width: 80%; max-width: 240px; }
+        .modalbox { background: white; padding: 14px; border-radius: 10px; width: 80%; max-width: 280px; max-height: 80vh; overflow-y: auto; }
         .modalbox h2 { margin: 0 0 10px; text-align: center; font-size: 16px; }
         
         textarea { width: 100%; height: 60px; font-size: 14px; padding: 6px; border: 2px solid #ddd; border-radius: 5px; resize: none; box-sizing: border-box; }
@@ -54,8 +68,12 @@
         .btns .gray { background: #ddd; }
         .btns .green { background: #27ae60; color: white; }
         .btns .purple { background: #9b59b6; color: white; }
+        .btns .blue { background: #3498db; color: white; }
         
-        input[type="text"], input[type="password"] { width: 100%; padding: 8px; font-size: 14px; border: 2px solid #ddd; border-radius: 5px; box-sizing: border-box; margin-bottom: 6px; }
+        select { width: 100%; padding: 8px; font-size: 14px; border: 2px solid #ddd; border-radius: 5px; margin-bottom: 8px; box-sizing: border-box; }
+        
+        .row { margin-bottom: 10px; }
+        .row label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
         
         #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 15px; font-size: 13px; display: none; z-index: 200; }
         #toast.on { display: block; }
@@ -87,10 +105,75 @@
     <div id="pinModal" class="modal">
         <div class="modalbox">
             <h2>Admin PIN</h2>
-            <input type="password" id="pinText" maxlength="4" placeholder="4 digits" style="text-align:center;letter-spacing:8px;font-size:20px">
+            <input type="password" id="pinText" maxlength="4" placeholder="4 digits" style="width:100%;padding:10px;font-size:20px;text-align:center;letter-spacing:8px;box-sizing:border-box;margin-bottom:8px">
             <div class="btns">
                 <button class="gray" id="pinCancel">Cancel</button>
                 <button class="purple" id="pinOk">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="setModal" class="modal">
+        <div class="modalbox">
+            <h2>Settings</h2>
+            
+            <div class="row">
+                <label>Note Size</label>
+                <select id="setSize">
+                    <option value="small">Small</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="large">Large</option>
+                    <option value="xlarge">Extra Large</option>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label>Color Scheme</label>
+                <select id="setScheme">
+                    <option value="default" selected>Default</option>
+                    <option value="dark">Dark</option>
+                    <option value="pastel">Pastel</option>
+                    <option value="bright">Bright</option>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label>Background Color</label>
+                <select id="setBg">
+                    <option value="#7a4a1e" selected>Wood Brown</option>
+                    <option value="#2c3e50">Dark Blue</option>
+                    <option value="#34495e">Slate</option>
+                    <option value="#1a1a2e">Midnight</option>
+                    <option value="#2d3436">Charcoal</option>
+                    <option value="#636e72">Gray</option>
+                    <option value="#000000">Black</option>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label>Font</label>
+                <select id="setFont">
+                    <option value="sans-serif" selected>Sans Serif</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                    <option value="cursive">Cursive</option>
+                </select>
+            </div>
+            
+            <div class="row">
+                <label>GitHub Token (for sync)</label>
+                <input type="password" id="setToken" placeholder="ghp_xxx...">
+            </div>
+            
+            <div class="row">
+                <label>Gist ID</label>
+                <input type="text" id="setGist" placeholder="Optional">
+            </div>
+            
+            <div class="btns">
+                <button class="gray" id="setCancel">Cancel</button>
+                <button class="green" id="setSave">Save</button>
             </div>
         </div>
     </div>
@@ -104,13 +187,20 @@
         var notes = [];
         var adminMode = false;
         
-        // Grid system - no overlap
-        var gridW, gridH, cellW, cellH;
-        var usedCells = {};
+        // Settings
+        var settings = {
+            size: 'medium',
+            scheme: 'default',
+            bg: '#7a4a1e',
+            font: 'sans-serif'
+        };
+        
+        var SIZE_MAP = { small: 80, medium: 110, large: 140, xlarge: 180 };
+        
+        // Grid
+        var gridW = 3, gridH = 5, cellW, cellH, usedCells = {};
         
         function initGrid() {
-            gridW = 3;
-            gridH = 5;
             cellW = window.innerWidth / gridW;
             cellH = (window.innerHeight - 100) / gridH;
             usedCells = {};
@@ -124,7 +214,7 @@
                 }
             }
             if (cells.length === 0) {
-                return {x: 20 + Math.random() * (window.innerWidth - 130), y: 60 + Math.random() * (window.innerHeight - 200)};
+                return {x: 20 + Math.random() * (window.innerWidth - 150), y: 60 + Math.random() * (window.innerHeight - 200)};
             }
             var cell = cells[Math.floor(Math.random() * cells.length)];
             usedCells[cell.r + ',' + cell.c] = true;
@@ -136,6 +226,12 @@
         
         function load() {
             initGrid();
+            
+            // Load settings from local (or web later)
+            var sset = localStorage('pset');
+            if (sset) { try { settings = JSON.parse(sset); } catch(e) {} }
+            applySettings();
+            
             var s = localStorage.getItem('pnotes');
             if (s) { try { notes = JSON.parse(s); } catch(e) { notes = []; } }
             
@@ -148,12 +244,34 @@
             if (notes.length === 0) {
                 notes = [
                     {id:1, t:'Tap + for new', c:'yellow', x:10, y:55},
-                    {id:2, t:'Tap ADMIN for del', c:'pink', x:120, y:60}
+                    {id:2, t:'ADMIN for settings', c:'pink', x:120, y:60}
                 ];
                 usedCells['0,0'] = true;
                 usedCells['1,0'] = true;
             }
             render();
+            loadFromWeb();
+        }
+        
+        function localStorage(key) {
+            try { return localStorage.getItem(key); } catch(e) { return null; }
+        }
+        
+        function applySettings() {
+            document.body.style.background = settings.bg;
+            document.body.style.fontFamily = settings.font;
+            
+            // Clear schemes
+            document.body.className = '';
+            if (settings.scheme !== 'default') document.body.className = settings.scheme;
+            
+            // Size
+            var sz = SIZE_MAP[settings.size] || 110;
+            document.documentElement.style.setProperty('--note-size', sz + 'px');
+        }
+        
+        function saveSettings() {
+            localStorage.setItem('pset', JSON.stringify(settings));
         }
         
         function save() {
@@ -163,12 +281,17 @@
         function render() {
             var b = document.getElementById('board');
             b.innerHTML = '';
+            var sz = SIZE_MAP[settings.size] || 110;
+            
             notes.forEach(function(n) {
                 var el = document.createElement('div');
                 el.className = 'note ' + n.c;
                 if (adminMode) el.className += ' admindel';
                 el.style.left = n.x + 'px';
                 el.style.top = n.y + 'px';
+                el.style.width = sz + 'px';
+                el.style.height = sz + 'px';
+                el.style.fontSize = (sz / 10) + 'px';
                 el.innerHTML = '<span>' + n.t + '</span><button class="del" data-id="'+n.id+'">×</button>';
                 if (adminMode) {
                     el.querySelector('.del').onclick = function(e) {
@@ -208,7 +331,6 @@
             setTimeout(function() { document.getElementById('pinText').focus(); }, 50);
         };
         
-        // Cancel buttons
         document.getElementById('noteCancel').onclick = function() {
             document.getElementById('noteModal').className = 'modal';
         };
@@ -232,7 +354,6 @@
             })(kb[i]);
         }
         
-        // Save
         function doSave() {
             var txt = document.getElementById('noteText').value.trim();
             if (!txt) { toast('Type something!'); return; }
@@ -253,27 +374,63 @@
             syncWeb();
         }
         
-        // PIN check
-        document.getElementById('pinOk').onclick = function() {
-            checkPin();
-        };
-        
-        document.getElementById('pinText').oninput = function() {
-            if (this.value.length === 4) checkPin();
-        };
-        
+        // PIN
         function checkPin() {
             var pin = document.getElementById('pinText').value;
             if (pin === PIN) {
                 adminMode = !adminMode;
                 document.getElementById('pinModal').className = 'modal';
+                if (adminMode) {
+                    // Show settings modal in admin mode
+                    showSettings();
+                }
                 render();
-                toast(adminMode ? 'Admin ON - tap ×' : 'Admin OFF');
+                toast(adminMode ? 'Admin ON' : 'Admin OFF');
             } else if (pin.length === 4) {
                 toast('Wrong PIN');
                 document.getElementById('pinText').value = '';
             }
         }
+        
+        document.getElementById('pinOk').onclick = checkPin;
+        document.getElementById('pinText').oninput = function() {
+            if (this.value.length === 4) checkPin();
+        };
+        
+        function showSettings() {
+            document.getElementById('setSize').value = settings.size;
+            document.getElementById('setScheme').value = settings.scheme;
+            document.getElementById('setBg').value = settings.bg;
+            document.getElementById('setFont').value = settings.font;
+            document.getElementById('setToken').value = localStorage.getItem('ptok') || '';
+            document.getElementById('setGist').value = localStorage.getItem('pgist') || '';
+            document.getElementById('setModal').className = 'modal on';
+        }
+        
+        document.getElementById('setCancel').onclick = function() {
+            document.getElementById('setModal').className = 'modal';
+        };
+        
+        document.getElementById('setSave').onclick = function() {
+            settings.size = document.getElementById('setSize').value;
+            settings.scheme = document.getElementById('setScheme').value;
+            settings.bg = document.getElementById('setBg').value;
+            settings.font = document.getElementById('setFont').value;
+            
+            var tok = document.getElementById('setToken').value.trim();
+            var gist = document.getElementById('setGist').value.trim();
+            
+            if (tok) localStorage.setItem('ptok', tok);
+            if (gist) localStorage.setItem('pgist', gist);
+            
+            saveSettings();
+            applySettings();
+            render();
+            
+            document.getElementById('setModal').className = 'modal';
+            toast('Settings saved!');
+            syncWeb();
+        };
         
         // Web sync
         function syncWeb() {
@@ -281,7 +438,11 @@
             var gist = localStorage.getItem('pgist');
             if (!tok) return;
             
-            var content = JSON.stringify({notes:notes, v:1});
+            var content = JSON.stringify({
+                notes: notes,
+                settings: settings,
+                v: 2
+            });
             
             if (gist) {
                 fetch('https://api.github.com/gists/' + gist, {
@@ -300,7 +461,33 @@
             }
         }
         
-        // Init
+        function loadFromWeb() {
+            var tok = localStorage.getItem('ptok');
+            var gist = localStorage.getItem('pgist');
+            if (!tok || !gist) return;
+            
+            fetch('https://api.github.com/gists/' + gist, {
+                headers: {'Authorization':'token '+tok}
+            }).then(function(r){return r.json();}).then(function(d){
+                if (d.files && d.files['notes.json']) {
+                    try {
+                        var data = JSON.parse(d.files['notes.json'].content);
+                        if (data.settings) {
+                            settings = data.settings;
+                            saveSettings();
+                            applySettings();
+                        }
+                        if (data.notes && data.notes.length) {
+                            notes = data.notes;
+                            save();
+                        }
+                    } catch(e) {}
+                }
+            }).catch(function(){}).then(function(){
+                render();
+            });
+        }
+        
         load();
     })();
     </script>
