@@ -9,18 +9,9 @@
         body { margin: 0; background: #7a4a1e; overflow: hidden; font-family: sans-serif; transition: background 0.3s; }
         #board { width: 100vw; height: 100vh; position: relative; }
         
-        .note {
-            position: absolute;
-            padding: 8px;
-            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            display: table;
-            word-break: break-word;
-            border-radius: 2px;
-            transition: all 0.3s;
-        }
+        .note { position: absolute; padding: 8px; box-shadow: 2px 2px 4px rgba(0,0,0,0.3); display: table; word-break: break-word; border-radius: 2px; transition: all 0.3s; }
         .note > span { display: table-cell; vertical-align: middle; text-align: center; }
         
-        /* Color schemes */
         .note.yellow { background: #fef3bd; }
         .note.pink { background: #ffd1dc; }
         .note.blue { background: #cce5ff; }
@@ -28,7 +19,6 @@
         .note.lavender { background: #e6e6fa; }
         .note.peach { background: #ffe5d9; }
         
-        /* Dark scheme */
         body.dark .note.yellow { background: #8B8B4B; color: #fff; }
         body.dark .note.pink { background: #8B4B5B; color: #fff; }
         body.dark .note.blue { background: #4B5B8B; color: #fff; }
@@ -36,17 +26,18 @@
         body.dark .note.lavender { background: #5B5B8B; color: #fff; }
         body.dark .note.peach { background: #8B6B4B; color: #fff; }
         
-        /* Pastel scheme */
         body.pastel .note { opacity: 0.85; }
-        
-        /* Bright scheme */
         body.bright .note { box-shadow: 4px 4px 8px rgba(0,0,0,0.5); }
         
         .note .del { display: none; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: #e74c3c; color: white; border: none; border-radius: 50%; font-size: 10px; line-height: 16px; text-align: center; cursor: pointer; }
         .note.admindel .del { display: block; }
         
         #add { position: fixed; bottom: 12px; right: 12px; width: 50px; height: 50px; background: #27ae60; border-radius: 50%; border: none; color: white; font-size: 24px; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 50; }
-        #admin { position: fixed; bottom: 12px; left: 12px; width: 50px; height: 50px; background: #9b59b6; border-radius: 50%; border: none; color: white; font-size: 11px; font-weight: bold; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 50; }
+        
+        #adminBar { display: none; position: fixed; bottom: 12px; left: 12px; right: 80px; height: 50px; background: #9b59b6; border-radius: 25px; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 50; align-items: center; justify-content: space-around; padding: 0 10px; }
+        #adminBar.show { display: flex; }
+        
+        #adminBar button { background: none; border: none; color: white; font-size: 11px; font-weight: bold; padding: 8px 12px; cursor: pointer; }
         
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
         .modal.on { display: flex; }
@@ -68,7 +59,7 @@
         .btns .gray { background: #ddd; }
         .btns .green { background: #27ae60; color: white; }
         .btns .purple { background: #9b59b6; color: white; }
-        .btns .blue { background: #3498db; color: white; }
+        .btns .red { background: #e74c3c; color: white; }
         
         select { width: 100%; padding: 8px; font-size: 14px; border: 2px solid #ddd; border-radius: 5px; margin-bottom: 8px; box-sizing: border-box; }
         
@@ -82,7 +73,11 @@
 <body>
     <div id="board"></div>
     <button id="add">+</button>
-    <button id="admin">ADMIN</button>
+    
+    <div id="adminBar">
+        <button id="btnSettings">⚙️ SETTINGS</button>
+        <button id="btnExitAdmin">❌ EXIT ADMIN</button>
+    </div>
     
     <!-- Note Modal -->
     <div id="noteModal" class="modal">
@@ -116,7 +111,7 @@
     <!-- Settings Modal -->
     <div id="setModal" class="modal">
         <div class="modalbox">
-            <h2>Settings</h2>
+            <h2>⚙️ Settings</h2>
             
             <div class="row">
                 <label>Note Size</label>
@@ -139,7 +134,7 @@
             </div>
             
             <div class="row">
-                <label>Background Color</label>
+                <label>Background</label>
                 <select id="setBg">
                     <option value="#7a4a1e" selected>Wood Brown</option>
                     <option value="#2c3e50">Dark Blue</option>
@@ -162,7 +157,7 @@
             </div>
             
             <div class="row">
-                <label>GitHub Token (for sync)</label>
+                <label>GitHub Token</label>
                 <input type="password" id="setToken" placeholder="ghp_xxx...">
             </div>
             
@@ -187,17 +182,9 @@
         var notes = [];
         var adminMode = false;
         
-        // Settings
-        var settings = {
-            size: 'medium',
-            scheme: 'default',
-            bg: '#7a4a1e',
-            font: 'sans-serif'
-        };
-        
+        var settings = { size: 'medium', scheme: 'default', bg: '#7a4a1e', font: 'sans-serif' };
         var SIZE_MAP = { small: 80, medium: 110, large: 140, xlarge: 180 };
         
-        // Grid
         var gridW = 3, gridH = 5, cellW, cellH, usedCells = {};
         
         function initGrid() {
@@ -227,13 +214,10 @@
         function load() {
             initGrid();
             
-            // Load settings from local (or web later)
-            var sset = localStorage('pset');
-            if (sset) { try { settings = JSON.parse(sset); } catch(e) {} }
+            try { var sset = localStorage.getItem('pset'); if (sset) settings = JSON.parse(sset); } catch(e) {}
             applySettings();
             
-            var s = localStorage.getItem('pnotes');
-            if (s) { try { notes = JSON.parse(s); } catch(e) { notes = []; } }
+            try { var s = localStorage.getItem('pnotes'); if (s) notes = JSON.parse(s); } catch(e) { notes = []; }
             
             notes.forEach(function(n) {
                 var c = Math.floor(n.x / cellW);
@@ -253,30 +237,15 @@
             loadFromWeb();
         }
         
-        function localStorage(key) {
-            try { return localStorage.getItem(key); } catch(e) { return null; }
-        }
-        
         function applySettings() {
             document.body.style.background = settings.bg;
             document.body.style.fontFamily = settings.font;
-            
-            // Clear schemes
             document.body.className = '';
             if (settings.scheme !== 'default') document.body.className = settings.scheme;
-            
-            // Size
-            var sz = SIZE_MAP[settings.size] || 110;
-            document.documentElement.style.setProperty('--note-size', sz + 'px');
         }
         
-        function saveSettings() {
-            localStorage.setItem('pset', JSON.stringify(settings));
-        }
-        
-        function save() {
-            localStorage.setItem('pnotes', JSON.stringify(notes));
-        }
+        function saveSettings() { try { localStorage.setItem('pset', JSON.stringify(settings)); } catch(e) {} }
+        function save() { try { localStorage.setItem('pnotes', JSON.stringify(notes)); } catch(e) {} }
         
         function render() {
             var b = document.getElementById('board');
@@ -301,6 +270,9 @@
                 }
                 b.appendChild(el);
             });
+            
+            // Show/hide admin bar
+            document.getElementById('adminBar').className = adminMode ? 'show' : '';
         }
         
         function delNote(id) {
@@ -318,25 +290,15 @@
             setTimeout(function() { t.className = ''; }, 2000);
         }
         
-        // Buttons
+        // Add button
         document.getElementById('add').onclick = function() {
             document.getElementById('noteModal').className = 'modal on';
             document.getElementById('noteText').value = '';
             setTimeout(function() { document.getElementById('noteText').focus(); }, 50);
         };
         
-        document.getElementById('admin').onclick = function() {
-            document.getElementById('pinModal').className = 'modal on';
-            document.getElementById('pinText').value = '';
-            setTimeout(function() { document.getElementById('pinText').focus(); }, 50);
-        };
-        
         document.getElementById('noteCancel').onclick = function() {
             document.getElementById('noteModal').className = 'modal';
-        };
-        
-        document.getElementById('pinCancel').onclick = function() {
-            document.getElementById('pinModal').className = 'modal';
         };
         
         // Keyboard
@@ -374,18 +336,30 @@
             syncWeb();
         }
         
-        // PIN
+        // Admin button triggers PIN
+        var adminBtn = document.createElement('button');
+        adminBtn.id = 'admin';
+        adminBtn.textContent = 'ADMIN';
+        adminBtn.style.cssText = 'position:fixed;bottom:12px;left:12px;width:50px;height:50px;background:#9b59b6;border-radius:50%;border:none;color:white;font-size:11px;font-weight:bold;box-shadow:2px 2px 6px rgba(0,0,0,0.3);z-index:50;';
+        document.body.appendChild(adminBtn);
+        
+        adminBtn.onclick = function() {
+            document.getElementById('pinModal').className = 'modal on';
+            document.getElementById('pinText').value = '';
+            setTimeout(function() { document.getElementById('pinText').focus(); }, 50);
+        };
+        
+        document.getElementById('pinCancel').onclick = function() {
+            document.getElementById('pinModal').className = 'modal';
+        };
+        
         function checkPin() {
             var pin = document.getElementById('pinText').value;
             if (pin === PIN) {
-                adminMode = !adminMode;
+                adminMode = true;
                 document.getElementById('pinModal').className = 'modal';
-                if (adminMode) {
-                    // Show settings modal in admin mode
-                    showSettings();
-                }
                 render();
-                toast(adminMode ? 'Admin ON' : 'Admin OFF');
+                toast('Admin ON - Use the purple bar below!');
             } else if (pin.length === 4) {
                 toast('Wrong PIN');
                 document.getElementById('pinText').value = '';
@@ -395,6 +369,17 @@
         document.getElementById('pinOk').onclick = checkPin;
         document.getElementById('pinText').oninput = function() {
             if (this.value.length === 4) checkPin();
+        };
+        
+        // Admin bar buttons
+        document.getElementById('btnSettings').onclick = function() {
+            showSettings();
+        };
+        
+        document.getElementById('btnExitAdmin').onclick = function() {
+            adminMode = false;
+            render();
+            toast('Admin OFF');
         };
         
         function showSettings() {
@@ -438,11 +423,7 @@
             var gist = localStorage.getItem('pgist');
             if (!tok) return;
             
-            var content = JSON.stringify({
-                notes: notes,
-                settings: settings,
-                v: 2
-            });
+            var content = JSON.stringify({ notes: notes, settings: settings, v: 2 });
             
             if (gist) {
                 fetch('https://api.github.com/gists/' + gist, {
