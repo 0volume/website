@@ -2,13 +2,25 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Post-it Board</title>
     <style>
-        * { -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background: #8B5A2B; font-family: -apple-system, sans-serif; overflow: hidden; }
+        * { -webkit-tap-highlight-color: none; }
+        body { margin: 0; background: #7a4a1e; overflow: hidden; font-family: sans-serif; }
         #board { width: 100vw; height: 100vh; position: relative; }
-        .note { position: absolute; width: 120px; height: 120px; padding: 8px; font-size: 11px; box-shadow: 2px 2px 5px rgba(0,0,0,0.25); display: flex; align-items: center; justify-content: center; text-align: center; word-wrap: break-word; user-select: none; border-radius: 2px; }
+        
+        .note {
+            position: absolute;
+            width: 110px; height: 110px;
+            padding: 8px;
+            font-size: 10px;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            display: table;
+            word-break: break-word;
+            border-radius: 2px;
+        }
+        .note > span { display: table-cell; vertical-align: middle; text-align: center; }
+        
         .yellow { background: #fef3bd; }
         .pink { background: #ffd1dc; }
         .blue { background: #cce5ff; }
@@ -16,305 +28,280 @@
         .lavender { background: #e6e6fa; }
         .peach { background: #ffe5d9; }
         
-        /* Bottom buttons */
-        #addBtn { position: fixed; bottom: 15px; right: 15px; width: 55px; height: 55px; background: #27ae60; border-radius: 50%; border: none; color: white; font-size: 28px; box-shadow: 2px 2px 8px rgba(0,0,0,0.3); z-index: 100; }
-        #adminBtn { position: fixed; bottom: 15px; left: 15px; width: 55px; height: 55px; background: #9b59b6; border-radius: 50%; border: none; color: white; font-size: 16px; font-weight: bold; box-shadow: 2px 2px 8px rgba(0,0,0,0.3); z-index: 100; }
+        .note .del { display: none; position: absolute; top: 2px; right: 2px; width: 16px; height: 16px; background: #e74c3c; color: white; border: none; border-radius: 50%; font-size: 10px; line-height: 16px; text-align: center; cursor: pointer; }
+        .note.admindel .del { display: block; }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: center; justify-content: center; }
-        .modal.open { display: flex; }
-        .box { background: white; padding: 16px; border-radius: 12px; width: 85%; max-width: 260px; }
-        .box h2 { margin: 0 0 12px; text-align: center; font-size: 17px; }
-        textarea { width: 100%; height: 65px; font-size: 14px; padding: 8px; border: 2px solid #ddd; border-radius: 6px; resize: none; font-family: inherit; box-sizing: border-box; }
-        textarea:focus { outline: none; border-color: #3498db; }
+        #add { position: fixed; bottom: 12px; right: 12px; width: 50px; height: 50px; background: #27ae60; border-radius: 50%; border: none; color: white; font-size: 24px; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 50; }
+        #admin { position: fixed; bottom: 12px; left: 12px; width: 50px; height: 50px; background: #9b59b6; border-radius: 50%; border: none; color: white; font-size: 11px; font-weight: bold; box-shadow: 2px 2px 6px rgba(0,0,0,0.3); z-index: 50; }
         
-        .kb { display: grid; grid-template-columns: repeat(9, 1fr); gap: 3px; margin-top: 8px; }
-        .kb button { padding: 8px 0; background: #eee; border: none; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; }
+        .modal.on { display: flex; }
+        
+        .modalbox { background: white; padding: 14px; border-radius: 10px; width: 80%; max-width: 240px; }
+        .modalbox h2 { margin: 0 0 10px; text-align: center; font-size: 16px; }
+        
+        textarea { width: 100%; height: 60px; font-size: 14px; padding: 6px; border: 2px solid #ddd; border-radius: 5px; resize: none; box-sizing: border-box; }
+        textarea:focus { border-color: #3498db; outline: none; }
+        
+        .kb { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 8px; justify-content: center; }
+        .kb button { width: 26px; height: 28px; background: #eee; border: none; border-radius: 3px; font-size: 11px; cursor: pointer; }
         .kb button:active { background: #ccc; }
-        .kb .sp { grid-column: span 5; }
-        .kb .sv { background: #27ae60; color: white; }
-        .kb .bs { background: #e74c3c; color: white; }
+        .kb .w1 { width: 80px; }
+        .kb .grn { background: #27ae60; color: white; }
         
-        .row { display: flex; gap: 8px; margin-top: 10px; }
-        .row button { flex: 1; padding: 10px; border: none; border-radius: 6px; font-size: 14px; cursor: pointer; }
-        .gray { background: #ddd; }
-        .greenbtn { background: #27ae60; color: white; }
-        .purple { background: #9b59b6; color: white; }
+        .btns { display: flex; gap: 6px; margin-top: 8px; }
+        .btns button { flex: 1; padding: 8px; border: none; border-radius: 5px; font-size: 13px; cursor: pointer; }
+        .btns .gray { background: #ddd; }
+        .btns .green { background: #27ae60; color: white; }
+        .btns .purple { background: #9b59b6; color: white; }
         
-        input { width: 100%; padding: 10px; font-size: 15px; border: 2px solid #ddd; border-radius: 6px; box-sizing: border-box; margin-bottom: 8px; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 8px; font-size: 14px; border: 2px solid #ddd; border-radius: 5px; box-sizing: border-box; margin-bottom: 6px; }
         
-        #msg { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 10px 18px; border-radius: 20px; font-size: 13px; display: none; z-index: 300; }
-        #msg.show { display: block; }
-        
-        .del { position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: #e74c3c; color: white; border: none; border-radius: 50%; font-size: 11px; display: none; }
-        .showdel .del { display: flex; align-items: center; justify-content: center; }
+        #toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 8px 16px; border-radius: 15px; font-size: 13px; display: none; z-index: 200; }
+        #toast.on { display: block; }
     </style>
 </head>
 <body>
     <div id="board"></div>
-    <button id="addBtn">+</button>
-    <button id="adminBtn">ADM</button>
+    <button id="add">+</button>
+    <button id="admin">ADMIN</button>
     
-    <div id="modal" class="modal">
-        <div class="box">
+    <!-- Note Modal -->
+    <div id="noteModal" class="modal">
+        <div class="modalbox">
             <h2>New Note</h2>
-            <textarea id="noteInput" placeholder="Type here..." maxlength="200"></textarea>
+            <textarea id="noteText" maxlength="150" placeholder="Type..."></textarea>
             <div class="kb">
-                <button>Q</button><button>W</button><button>E</button><button>R</button><button>T</button><button>Y</button><button>U</button><button>I</button><button>O</button>
-                <button>P</button><button>A</button><button>S</button><button>D</button><button>F</button><button>G</button><button>H</button><button>J</button><button>K</button>
-                <button>L</button><button>Z</button><button>X</button><button>C</button><button>V</button><button>B</button><button>N</button><button>M</button>
-                <button class="bs">⌫</button><button class="sp">space</button><button class="sv">✓</button>
+                <button>Q</button><button>W</button><button>E</button><button>R</button><button>T</button><button>Y</button><button>U</button><button>I</button><button>O</button><button>P</button>
+                <button>A</button><button>S</button><button>D</button><button>F</button><button>G</button><button>H</button><button>J</button><button>K</button><button>L</button>
+                <button>Z</button><button>X</button><button>C</button><button>V</button><button>B</button><button>N</button><button>M</button>
+                <button class="w1">⌫</button><button class="w1 grn">SAVE</button>
             </div>
-            <div class="row">
-                <button class="gray" id="cancelBtn">Cancel</button>
-                <button class="greenbtn" id="saveBtn">Save</button>
+            <div class="btns">
+                <button class="gray" id="noteCancel">Cancel</button>
             </div>
         </div>
     </div>
     
+    <!-- PIN Modal -->
     <div id="pinModal" class="modal">
-        <div class="box">
-            <h2>Admin Mode</h2>
-            <input type="password" id="pinInput" maxlength="4" placeholder="PIN" style="text-align:center;letter-spacing:8px;font-size:22px">
-            <div class="row">
-                <button class="gray" id="pinCancelBtn">Cancel</button>
-                <button class="purple" id="pinOkBtn">OK</button>
+        <div class="modalbox">
+            <h2>Admin PIN</h2>
+            <input type="password" id="pinText" maxlength="4" placeholder="4 digits" style="text-align:center;letter-spacing:8px;font-size:20px">
+            <div class="btns">
+                <button class="gray" id="pinCancel">Cancel</button>
+                <button class="purple" id="pinOk">OK</button>
             </div>
         </div>
     </div>
     
-    <div id="msg"></div>
+    <div id="toast"></div>
 
     <script>
     (function() {
         var COLORS = ['yellow','pink','blue','green','lavender','peach'];
         var PIN = '1234';
-        
         var notes = [];
         var adminMode = false;
         
-        // Grid positions to avoid overlap
-        var gridPositions = [];
-        var gridCols = 3;
-        var gridRows = 5;
+        // Grid system - no overlap
+        var gridW, gridH, cellW, cellH;
+        var usedCells = {};
         
         function initGrid() {
-            gridPositions = [];
-            var cellW = window.innerWidth / gridCols;
-            var cellH = (window.innerHeight - 100) / gridRows;
-            for (var r = 0; r < gridRows; r++) {
-                for (var c = 0; c < gridCols; c++) {
-                    gridPositions.push({
-                        x: c * cellW + 10 + Math.random() * 20,
-                        y: r * cellH + 40 + Math.random() * 20
-                    });
+            gridW = 3;
+            gridH = 5;
+            cellW = window.innerWidth / gridW;
+            cellH = (window.innerHeight - 100) / gridH;
+            usedCells = {};
+        }
+        
+        function getPos() {
+            var cells = [];
+            for (var r = 0; r < gridH; r++) {
+                for (var c = 0; c < gridW; c++) {
+                    if (!usedCells[r + ',' + c]) cells.push({r:r, c:c});
                 }
             }
-            // Shuffle
-            for (var i = gridPositions.length - 1; i > 0; i--) {
-                var j = Math.floor(Math.random() * (i + 1));
-                var tmp = gridPositions[i];
-                gridPositions[i] = gridPositions[j];
-                gridPositions[j] = tmp;
+            if (cells.length === 0) {
+                return {x: 20 + Math.random() * (window.innerWidth - 130), y: 60 + Math.random() * (window.innerHeight - 200)};
             }
+            var cell = cells[Math.floor(Math.random() * cells.length)];
+            usedCells[cell.r + ',' + cell.c] = true;
+            return {
+                x: cell.c * cellW + 8 + Math.random() * 15,
+                y: cell.r * cellH + 50 + Math.random() * 15
+            };
         }
         
-        function getNextPosition() {
-            if (gridPositions.length === 0) initGrid();
-            return gridPositions.pop() || {x: 20, y: 60};
-        }
-        
-        // Load notes
-        var saved = localStorage.getItem('pnotes');
-        if (saved) { try { notes = JSON.parse(saved); } catch(e) {} }
-        if (!notes.length) {
-            notes = [
-                {id:1, text:'Tap + for new note', color:'yellow', x:20, y:50},
-                {id:2, text:'Tap ADM for admin', color:'pink', x:150, y:60}
-            ];
-        }
-        
-        var board = document.getElementById('board');
-        var addBtn = document.getElementById('addBtn');
-        var adminBtn = document.getElementById('adminBtn');
-        var modal = document.getElementById('modal');
-        var pinModal = document.getElementById('pinModal');
-        var noteInput = document.getElementById('noteInput');
-        var msg = document.getElementById('msg');
-        
-        function render() {
-            board.innerHTML = '';
+        function load() {
+            initGrid();
+            var s = localStorage.getItem('pnotes');
+            if (s) { try { notes = JSON.parse(s); } catch(e) { notes = []; } }
+            
             notes.forEach(function(n) {
-                var div = document.createElement('div');
-                div.className = 'note ' + n.color;
-                if (adminMode) div.className += ' showdel';
-                div.style.left = n.x + 'px';
-                div.style.top = n.y + 'px';
-                div.innerHTML = '<button class="del" data-id="'+n.id+'">×</button><span>'+n.text+'</span>';
-                
-                if (adminMode) {
-                    div.querySelector('.del').onclick = function(e) {
-                        e.stopPropagation();
-                        notes = notes.filter(function(x) { return x.id !== n.id; });
-                        saveNotes();
-                        render();
-                        showMsg('Deleted');
-                    };
-                }
-                
-                board.appendChild(div);
+                var c = Math.floor(n.x / cellW);
+                var r = Math.floor((n.y - 50) / cellH);
+                if (r >= 0 && r < gridH && c >= 0 && c < gridW) usedCells[r + ',' + c] = true;
             });
+            
+            if (notes.length === 0) {
+                notes = [
+                    {id:1, t:'Tap + for new', c:'yellow', x:10, y:55},
+                    {id:2, t:'Tap ADMIN for del', c:'pink', x:120, y:60}
+                ];
+                usedCells['0,0'] = true;
+                usedCells['1,0'] = true;
+            }
+            render();
         }
         
-        function saveNotes() {
+        function save() {
             localStorage.setItem('pnotes', JSON.stringify(notes));
         }
         
-        function showMsg(t) {
-            msg.textContent = t;
-            msg.className = 'show';
-            setTimeout(function() { msg.className = ''; }, 2000);
+        function render() {
+            var b = document.getElementById('board');
+            b.innerHTML = '';
+            notes.forEach(function(n) {
+                var el = document.createElement('div');
+                el.className = 'note ' + n.c;
+                if (adminMode) el.className += ' admindel';
+                el.style.left = n.x + 'px';
+                el.style.top = n.y + 'px';
+                el.innerHTML = '<span>' + n.t + '</span><button class="del" data-id="'+n.id+'">×</button>';
+                if (adminMode) {
+                    el.querySelector('.del').onclick = function(e) {
+                        e.stopPropagation();
+                        delNote(n.id);
+                    };
+                }
+                b.appendChild(el);
+            });
         }
         
-        // ADD BUTTON
-        addBtn.onclick = function() {
-            modal.className = 'modal open';
-            noteInput.value = '';
-            setTimeout(function() { noteInput.focus(); }, 100);
+        function delNote(id) {
+            notes = notes.filter(function(n) { return n.id !== id; });
+            save();
+            render();
+            toast('Deleted');
+            syncWeb();
+        }
+        
+        function toast(msg) {
+            var t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'on';
+            setTimeout(function() { t.className = ''; }, 2000);
+        }
+        
+        // Buttons
+        document.getElementById('add').onclick = function() {
+            document.getElementById('noteModal').className = 'modal on';
+            document.getElementById('noteText').value = '';
+            setTimeout(function() { document.getElementById('noteText').focus(); }, 50);
         };
         
-        document.getElementById('cancelBtn').onclick = function() {
-            modal.className = '';
+        document.getElementById('admin').onclick = function() {
+            document.getElementById('pinModal').className = 'modal on';
+            document.getElementById('pinText').value = '';
+            setTimeout(function() { document.getElementById('pinText').focus(); }, 50);
         };
         
-        // KEYBOARD
-        var keys = document.querySelectorAll('.kb button');
-        for (var i = 0; i < keys.length; i++) {
-            keys[i].onclick = (function(btn) {
+        // Cancel buttons
+        document.getElementById('noteCancel').onclick = function() {
+            document.getElementById('noteModal').className = 'modal';
+        };
+        
+        document.getElementById('pinCancel').onclick = function() {
+            document.getElementById('pinModal').className = 'modal';
+        };
+        
+        // Keyboard
+        var kb = document.querySelectorAll('.kb button');
+        for (var i = 0; i < kb.length; i++) {
+            kb[i].onclick = (function(b) {
                 return function(e) {
                     e.preventDefault();
-                    var txt = btn.textContent;
-                    if (txt === '⌫') {
-                        noteInput.value = noteInput.value.slice(0, -1);
-                    } else if (txt === '✓') {
-                        doSave();
-                    } else if (txt === 'space') {
-                        noteInput.value += ' ';
-                    } else {
-                        noteInput.value += txt.toLowerCase();
-                    }
+                    var txt = b.textContent;
+                    var input = document.getElementById('noteText');
+                    if (txt === '⌫') input.value = input.value.slice(0,-1);
+                    else if (txt === 'SAVE') doSave();
+                    else input.value += txt.toLowerCase();
                 };
-            })(keys[i]);
+            })(kb[i]);
         }
         
-        // SAVE
+        // Save
         function doSave() {
-            var txt = noteInput.value.trim();
-            if (!txt) { showMsg('Type something!'); return; }
+            var txt = document.getElementById('noteText').value.trim();
+            if (!txt) { toast('Type something!'); return; }
             
-            var pos = getNextPosition();
+            var pos = getPos();
             notes.push({
                 id: Date.now(),
-                text: txt,
-                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                t: txt,
+                c: COLORS[Math.floor(Math.random() * COLORS.length)],
                 x: pos.x,
                 y: pos.y
             });
             
-            saveNotes();
-            modal.className = '';
+            save();
+            document.getElementById('noteModal').className = 'modal';
             render();
-            showMsg('Saved!');
+            toast('Saved!');
             syncWeb();
         }
         
-        document.getElementById('saveBtn').onclick = doSave;
-        
-        // ADMIN BUTTON (separate button, single press)
-        adminBtn.onclick = function() {
-            pinModal.className = 'modal open';
-            document.getElementById('pinInput').value = '';
-            document.getElementById('pinInput').focus();
+        // PIN check
+        document.getElementById('pinOk').onclick = function() {
+            checkPin();
         };
         
-        document.getElementById('pinCancelBtn').onclick = function() {
-            pinModal.className = '';
+        document.getElementById('pinText').oninput = function() {
+            if (this.value.length === 4) checkPin();
         };
         
-        document.getElementById('pinOkBtn').onclick = function() {
-            var pin = document.getElementById('pinInput').value;
+        function checkPin() {
+            var pin = document.getElementById('pinText').value;
             if (pin === PIN) {
                 adminMode = !adminMode;
+                document.getElementById('pinModal').className = 'modal';
                 render();
-                showMsg(adminMode ? 'Admin ON - tap ×' : 'Admin OFF');
-                pinModal.className = '';
+                toast(adminMode ? 'Admin ON - tap ×' : 'Admin OFF');
             } else if (pin.length === 4) {
-                showMsg('Wrong PIN');
-                document.getElementById('pinInput').value = '';
+                toast('Wrong PIN');
+                document.getElementById('pinText').value = '';
             }
-        };
+        }
         
-        // Also check on input
-        document.getElementById('pinInput').oninput = function() {
-            if (this.value.length === 4) {
-                if (this.value === PIN) {
-                    adminMode = !adminMode;
-                    render();
-                    showMsg(adminMode ? 'Admin ON - tap ×' : 'Admin OFF');
-                    pinModal.className = '';
-                } else {
-                    showMsg('Wrong PIN');
-                    this.value = '';
-                }
-            }
-        };
-        
-        // WEB SYNC
+        // Web sync
         function syncWeb() {
-            var token = localStorage.getItem('ptok');
+            var tok = localStorage.getItem('ptok');
             var gist = localStorage.getItem('pgist');
-            if (!token) return;
+            if (!tok) return;
             
-            var content = JSON.stringify({notes: notes, version: 1});
+            var content = JSON.stringify({notes:notes, v:1});
             
             if (gist) {
                 fetch('https://api.github.com/gists/' + gist, {
                     method: 'PATCH',
-                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ files: { 'notes.json': { content: content } } })
-                }).catch(function() {});
+                    headers: {'Authorization':'token '+tok, 'Content-Type':'application/json'},
+                    body: JSON.stringify({files:{'notes.json':{content:content}}})
+                }).catch(function(){});
             } else {
                 fetch('https://api.github.com/gists', {
                     method: 'POST',
-                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ description: 'Post-it Notes', public: false, files: { 'notes.json': { content: content } } })
-                }).then(function(r) { return r.json(); }).then(function(d) {
+                    headers: {'Authorization':'token '+tok, 'Content-Type':'application/json'},
+                    body: JSON.stringify({description:'Post-it Notes', public:false, files:{'notes.json':{content:content}}})
+                }).then(function(r){return r.json();}).then(function(d){
                     localStorage.setItem('pgist', d.id);
-                }).catch(function() {});
+                }).catch(function(){});
             }
         }
         
-        // Load from web
-        var token = localStorage.getItem('ptok');
-        var gist = localStorage.getItem('pgist');
-        if (token && gist) {
-            fetch('https://api.github.com/gists/' + gist, {
-                headers: { 'Authorization': 'token ' + token }
-            }).then(function(r) { return r.json(); }).then(function(d) {
-                if (d.files && d.files['notes.json']) {
-                    try {
-                        var loaded = JSON.parse(d.files['notes.json'].content).notes;
-                        if (loaded && loaded.length) {
-                            notes = loaded;
-                            saveNotes();
-                        }
-                    } catch(e) {}
-                }
-            }).catch(function() {}).then(function() {
-                render();
-            });
-        } else {
-            render();
-        }
+        // Init
+        load();
     })();
     </script>
 </body>
