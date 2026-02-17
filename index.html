@@ -10,6 +10,7 @@
         
         #board { width: 100vw; height: 100vh; position: relative; }
         
+        /* Note styles - each palette has its own colors */
         .note {
             position: absolute;
             padding: 10px;
@@ -24,20 +25,46 @@
             cursor: pointer;
         }
         
-        .note.yellow { background: #fef3bd; color: #333; }
-        .note.pink { background: #ffd1dc; color: #333; }
-        .note.blue { background: #cce5ff; color: #333; }
-        .note.green { background: #d4edda; color: #333; }
-        .note.lavender { background: #e6e6fa; color: #333; }
-        .note.peach { background: #ffe5d9; color: #333; }
-        .note.orange { background: #ffddc1; color: #333; }
-        .note.mint { background: #c1ffdd; color: #333; }
+        /* Palette: Classic (yellow, pink, blue, green) */
+        .palette-classic .note.yellow { background: #fef3bd; color: #333; }
+        .palette-classic .note.pink { background: #ffd1dc; color: #333; }
+        .palette-classic .note.blue { background: #cce5ff; color: #333; }
+        .palette-classic .note.green { background: #d4edda; color: #333; }
         
-        body.dark-mode .note.yellow { background: #8B8B4B; color: #fff; }
-        body.dark-mode .note.pink { background: #8B4B5B; color: #fff; }
-        body.dark-mode .note.blue { background: #4B5B8B; color: #fff; }
-        body.dark-mode .note.green { background: #4B8B5B; color: #fff; }
+        /* Palette: Warm (peach, orange, yellow, coral) */
+        .palette-warm .note.yellow { background: #fff8dc; color: #333; }
+        .palette-warm .note.pink { background: #ffe4e1; color: #333; }
+        .palette-warm .note.blue { background: #ffefd5; color: #333; }
+        .palette-warm .note.green { background: #ffdab9; color: #333; }
         
+        /* Palette: Cool (lavender, mint, sky, sea) */
+        .palette-cool .note.yellow { background: #e6e6fa; color: #333; }
+        .palette-cool .note.pink { background: #c1ffdd; color: #333; }
+        .palette-cool .note.blue { background: #cce5ff; color: #333; }
+        .palette-cool .note.green { background: #b5eaf7; color: #333; }
+        
+        /* Palette: White (white, cream, ivory, snow) */
+        .palette-white .note.yellow { background: #ffffff; color: #333; border: 1px solid #ddd; }
+        .palette-white .note.pink { background: #fffaf0; color: #333; border: 1px solid #ddd; }
+        .palette-white .note.blue { background: #f5f5f5; color: #333; border: 1px solid #ddd; }
+        .palette-white .note.green { background: #fafafa; color: #333; border: 1px solid #ddd; }
+        
+        /* Palette: Black (black, charcoal, dark gray, slate) */
+        .palette-black .note.yellow { background: #1a1a1a; color: #fff; }
+        .palette-black .note.pink { background: #2d2d2d; color: #fff; }
+        .palette-black .note.blue { background: #3d3d3d; color: #fff; }
+        .palette-black .note.green { background: #4d4d4d; color: #fff; }
+        
+        /* Palette: Neon */
+        .palette-neon .note.yellow { background: #ff00ff; color: #fff; }
+        .palette-neon .note.pink { background: #00ffff; color: #000; }
+        .palette-neon .note.blue { background: #ffff00; color: #000; }
+        .palette-neon .note.green { background: #ff6600; color: #fff; }
+        
+        /* Dark mode overrides text color */
+        body.dark-mode .note { color: #fff; }
+        
+        /* Delete button */
         .note .del { 
             display: none; position: absolute; top: -5px; right: -5px; 
             width: 20px; height: 20px; background: #e74c3c; color: white; 
@@ -45,15 +72,17 @@
         }
         .note.show-del .del { display: flex; align-items: center; justify-content: center; }
         
+        /* Buttons */
         #addBtn { position: fixed; bottom: 15px; right: 15px; width: 55px; height: 55px; background: #27ae60; border-radius: 50%; border: none; color: white; font-size: 28px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; }
         #adminBtn { position: fixed; bottom: 15px; left: 15px; width: 55px; height: 55px; background: #9b59b6; border-radius: 50%; border: none; color: white; font-size: 12px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; }
         #exitBtn { position: fixed; bottom: 15px; left: 15px; width: 55px; height: 55px; background: #e74c3c; border-radius: 50%; border: none; color: white; font-size: 11px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; display: none; }
         #settingsBtn { position: fixed; bottom: 80px; left: 15px; width: 55px; height: 55px; background: #3498db; border-radius: 50%; border: none; color: white; font-size: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; display: none; }
         
+        /* Modal */
         .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; }
         .modal.open { display: flex; }
         
-        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 300px; }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 300px; max-height: 85vh; overflow-y: auto; }
         .modal-content h2 { margin: 0 0 15px 0; text-align: center; font-size: 18px; }
         
         textarea, input[type=text], input[type=password] { width: 100%; padding: 12px; font-size: 15px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; }
@@ -77,8 +106,13 @@
         .setting-row label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
         .setting-row select { width: 100%; padding: 10px; font-size: 14px; border: 2px solid #ddd; border-radius: 8px; }
         
+        .setting-group { border: 1px solid #ddd; border-radius: 8px; padding: 10px; margin-bottom: 10px; }
+        .setting-group h3 { margin: 0 0 10px 0; font-size: 13px; color: #666; }
+        
         #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; display: none; z-index: 300; }
         #toast.show { display: block; }
+        
+        .censored { background: #ff0000 !important; color: #fff !important; padding: 2px 5px; border-radius: 3px; }
     </style>
 </head>
 <body>
@@ -123,56 +157,85 @@
         <div class="modal-content">
             <h2>⚙ Settings</h2>
             
-            <div class="setting-row">
-                <label>Note Size</label>
-                <select id="sizeSelect">
-                    <option value="small">Small</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="large">Large</option>
-                    <option value="xlarge">Extra Large</option>
-                </select>
+            <div class="setting-group">
+                <h3>Note Palette</h3>
+                <div class="setting-row">
+                    <select id="paletteSelect">
+                        <option value="palette-classic" selected>Classic (Yellow, Pink, Blue, Green)</option>
+                        <option value="palette-warm">Warm (Peach, Orange, Cream)</option>
+                        <option value="palette-cool">Cool (Lavender, Mint, Sky)</option>
+                        <option value="palette-white">White (White, Cream, Ivory)</option>
+                        <option value="palette-black">Black (Dark, Charcoal, Gray)</option>
+                        <option value="palette-neon">Neon (Bright Colors)</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="setting-row">
-                <label>Background Color</label>
-                <select id="bgSelect">
-                    <option value="#7a4a1e">Wood Brown</option>
-                    <option value="#8B4513">Saddle Brown</option>
-                    <option value="#A0522D">Sienna</option>
-                    <option value="#2c3e50">Dark Blue</option>
-                    <option value="#34495e">Slate Gray</option>
-                    <option value="#1a1a2e">Midnight</option>
-                    <option value="#2d3436">Charcoal</option>
-                    <option value="#636e72">Gray</option>
-                    <option value="#000000">Black</option>
-                    <option value="#27ae60">Forest Green</option>
-                    <option value="#16a085">Teal</option>
-                    <option value="#e74c3c">Crimson</option>
-                    <option value="#8e44ad">Purple</option>
-                </select>
+            <div class="setting-group">
+                <h3>Background</h3>
+                <div class="setting-row">
+                    <select id="bgSelect">
+                        <option value="#7a4a1e">Wood Brown</option>
+                        <option value="#8B4513">Saddle Brown</option>
+                        <option value="#A0522D">Sienna</option>
+                        <option value="#2c3e50">Dark Blue</option>
+                        <option value="#34495e">Slate Gray</option>
+                        <option value="#1a1a2e">Midnight</option>
+                        <option value="#2d3436">Charcoal</option>
+                        <option value="#636e72">Gray</option>
+                        <option value="#000000">Black</option>
+                        <option value="#27ae60">Forest Green</option>
+                        <option value="#16a085">Teal</option>
+                        <option value="#e74c3c">Crimson</option>
+                        <option value="#8e44ad">Purple</option>
+                        <option value="#ffffff">White</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="setting-row">
-                <label>Color Scheme</label>
-                <select id="schemeSelect">
-                    <option value="default" selected>Default (Light)</option>
-                    <option value="dark-mode">Dark</option>
-                </select>
+            <div class="setting-group">
+                <h3>Font</h3>
+                <div class="setting-row">
+                    <select id="fontSelect">
+                        <option value="sans-serif" selected>Sans Serif</option>
+                        <option value="serif">Serif</option>
+                        <option value="monospace">Monospace</option>
+                        <option value="cursive">Cursive</option>
+                        <option value="Arial Black">Arial Black</option>
+                        <option value="Georgia">Georgia</option>
+                        <option value="Verdana">Verdana</option>
+                    </select>
+                </div>
+                <div class="setting-row">
+                    <label><input type="checkbox" id="boldCheck"> Bold</label>
+                    <label><input type="checkbox" id="italicCheck"> Italic</label>
+                </div>
             </div>
             
-            <div class="setting-row">
-                <label>Font</label>
-                <select id="fontSelect">
-                    <option value="sans-serif" selected>Sans Serif</option>
-                    <option value="serif">Serif</option>
-                    <option value="monospace">Monospace</option>
-                    <option value="cursive">Cursive</option>
-                </select>
+            <div class="setting-group">
+                <h3>Note Size</h3>
+                <div class="setting-row">
+                    <select id="sizeSelect">
+                        <option value="small">Small</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="large">Large</option>
+                        <option value="xlarge">Extra Large</option>
+                    </select>
+                </div>
             </div>
             
-            <div class="setting-row">
-                <label>GitHub Token</label>
-                <input type="password" id="tokenInput" placeholder="ghp_xxx...">
+            <div class="setting-group">
+                <h3>Censorship</h3>
+                <div class="setting-row">
+                    <label><input type="checkbox" id="censorCheck" checked> Enable automatic word filter</label>
+                </div>
+            </div>
+            
+            <div class="setting-group">
+                <h3>Sync</h3>
+                <div class="setting-row">
+                    <input type="password" id="tokenInput" placeholder="GitHub Token (optional)">
+                </div>
             </div>
             
             <div class="btn-row">
@@ -187,12 +250,27 @@
     <script>
     (function() {
         var PIN = '1234';
-        var COLORS = ['yellow','pink','blue','green','lavender','peach','orange','mint'];
+        var PALETTE_COLORS = ['yellow','pink','blue','green'];
         var SIZES = { small: 70, medium: 100, large: 130, xlarge: 160 };
+        
+        // Censorship words list
+        var CENSOR_WORDS = [
+            'fuck','shit','ass','bitch','bastard','cunt','dick','cock','pussy',
+            'damn','hell','crap','stupid','idiot','dumb','shitty','fucker',
+            'nigger','faggot','slut','whore','racist','sexist','homophobic'
+        ];
         
         var notes = [];
         var adminMode = false;
-        var settings = { size: 'medium', scheme: 'default', bg: '#7a4a1e', font: 'sans-serif' };
+        var settings = { 
+            palette: 'palette-classic', 
+            bg: '#7a4a1e', 
+            font: 'sans-serif',
+            size: 'medium',
+            bold: false,
+            italic: false,
+            censor: true
+        };
         
         var gridCols = 3, gridRows = 5;
         var cellW, cellH;
@@ -233,16 +311,12 @@
         function load() {
             initGrid();
             
-            // Load settings
             try { var s = localStorage.getItem('psettings'); if (s) settings = JSON.parse(s); } catch(e) {}
             
-            // Load notes
             try { var n = localStorage.getItem('pnotes'); if (n) notes = JSON.parse(n); } catch(e) {}
             
-            // Mark used cells
             notes.forEach(function(note) { markCellUsed(note.x, note.y); });
             
-            // Default notes
             if (notes.length === 0) {
                 notes = [
                     { id: 1, text: 'Tap + for new', color: 'yellow', x: 10, y: 55 },
@@ -258,10 +332,30 @@
             setupEvents();
         }
         
+        function censorText(text) {
+            if (!settings.censor) return text;
+            
+            var censored = text;
+            CENSOR_WORDS.forEach(function(word) {
+                var regex = new RegExp(word, 'gi');
+                censored = censored.replace(regex, '■');
+            });
+            return censored;
+        }
+        
         function applySettings() {
             document.body.style.background = settings.bg;
             document.body.style.fontFamily = settings.font;
-            document.body.className = settings.scheme;
+            
+            // Set palette class on board
+            document.getElementById('board').className = settings.palette;
+            
+            // Dark or light mode based on background
+            if (settings.bg === '#000000' || settings.bg === '#1a1a2e' || settings.bg === '#2d3436' || settings.bg === '#2c3e50') {
+                document.body.classList.add('dark-mode');
+            } else {
+                document.body.classList.remove('dark-mode');
+            }
         }
         
         function render() {
@@ -270,6 +364,7 @@
             
             var size = SIZES[settings.size] || 100;
             var fontSize = Math.max(10, size / 8);
+            var fontStyle = (settings.italic ? 'italic ' : '') + (settings.bold ? 'bold ' : '');
             
             notes.forEach(function(note) {
                 var el = document.createElement('div');
@@ -279,7 +374,10 @@
                 el.style.width = size + 'px';
                 el.style.height = size + 'px';
                 el.style.fontSize = fontSize + 'px';
-                el.innerHTML = '<span>' + note.text + '</span><button class="del" data-id="' + note.id + '">×</button>';
+                el.style.fontWeight = settings.bold ? 'bold' : 'normal';
+                el.style.fontStyle = settings.italic ? 'italic' : 'normal';
+                
+                el.innerHTML = '<span>' + censorText(note.text) + '</span><button class="del" data-id="' + note.id + '">×</button>';
                 
                 if (adminMode) {
                     el.querySelector('.del').onclick = function(e) {
@@ -291,7 +389,6 @@
                 board.appendChild(el);
             });
             
-            // Toggle buttons
             document.getElementById('adminBtn').style.display = adminMode ? 'none' : 'block';
             document.getElementById('exitBtn').style.display = adminMode ? 'block' : 'none';
             document.getElementById('settingsBtn').style.display = adminMode ? 'block' : 'none';
@@ -322,7 +419,7 @@
             notes.push({
                 id: Date.now(),
                 text: text,
-                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                color: PALETTE_COLORS[Math.floor(Math.random() * PALETTE_COLORS.length)],
                 x: pos.x,
                 y: pos.y
             });
@@ -380,7 +477,7 @@
             var gist = localStorage.getItem('pgist');
             if (!token) return;
             
-            var data = JSON.stringify({ notes: notes, settings: settings, version: 4 });
+            var data = JSON.stringify({ notes: notes, settings: settings, version: 6 });
             
             if (gist) {
                 fetch('https://api.github.com/gists/' + gist, {
@@ -427,31 +524,29 @@
         }
         
         function setupEvents() {
-            // Add note
             document.getElementById('addBtn').onclick = function() {
                 document.getElementById('noteInput').value = '';
                 openModal('noteModal');
                 setTimeout(function() { document.getElementById('noteInput').focus(); }, 100);
             };
             
-            // Admin
             document.getElementById('adminBtn').onclick = toggleAdmin;
             document.getElementById('exitBtn').onclick = toggleAdmin;
             
-            // Settings
             document.getElementById('settingsBtn').onclick = function() {
-                document.getElementById('sizeSelect').value = settings.size;
-                document.getElementById('schemeSelect').value = settings.scheme;
+                document.getElementById('paletteSelect').value = settings.palette;
                 document.getElementById('bgSelect').value = settings.bg;
                 document.getElementById('fontSelect').value = settings.font;
+                document.getElementById('sizeSelect').value = settings.size;
+                document.getElementById('boldCheck').checked = settings.bold;
+                document.getElementById('italicCheck').checked = settings.italic;
+                document.getElementById('censorCheck').checked = settings.censor;
                 document.getElementById('tokenInput').value = localStorage.getItem('ptoken') || '';
                 openModal('settingsModal');
             };
             
-            // Note modal
             document.getElementById('noteCancelBtn').onclick = function() { closeModal('noteModal'); };
             
-            // Keyboard
             document.querySelectorAll('.key').forEach(function(btn) {
                 btn.onclick = function(e) {
                     e.preventDefault();
@@ -464,20 +559,21 @@
                 };
             });
             
-            // PIN modal
             document.getElementById('pinCancelBtn').onclick = function() { closeModal('pinModal'); };
             document.getElementById('pinOkBtn').onclick = checkPin;
             document.getElementById('pinInput').oninput = function() {
                 if (this.value.length === 4) checkPin();
             };
             
-            // Settings modal
             document.getElementById('settingsCancelBtn').onclick = function() { closeModal('settingsModal'); };
             document.getElementById('settingsSaveBtn').onclick = function() {
-                settings.size = document.getElementById('sizeSelect').value;
-                settings.scheme = document.getElementById('schemeSelect').value;
+                settings.palette = document.getElementById('paletteSelect').value;
                 settings.bg = document.getElementById('bgSelect').value;
                 settings.font = document.getElementById('fontSelect').value;
+                settings.size = document.getElementById('sizeSelect').value;
+                settings.bold = document.getElementById('boldCheck').checked;
+                settings.italic = document.getElementById('italicCheck').checked;
+                settings.censor = document.getElementById('censorCheck').checked;
                 
                 var token = document.getElementById('tokenInput').value.trim();
                 if (token) localStorage.setItem('ptoken', token);
@@ -490,7 +586,6 @@
                 syncToWeb();
             };
             
-            // Close modals on background click
             document.querySelectorAll('.modal').forEach(function(modal) {
                 modal.onclick = function(e) {
                     if (e.target === modal) modal.classList.remove('open');
@@ -498,7 +593,6 @@
             });
         }
         
-        // Start
         load();
     })();
     </script>
