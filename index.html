@@ -8,10 +8,8 @@
         * { -webkit-tap-highlight-color: none; box-sizing: border-box; }
         body { margin: 0; background: #7a4a1e; font-family: sans-serif; overflow: hidden; touch-action: manipulation; }
         
-        /* Board */
         #board { width: 100vw; height: 100vh; position: relative; }
         
-        /* Notes */
         .note {
             position: absolute;
             padding: 10px;
@@ -24,25 +22,22 @@
             border-radius: 3px;
             font-size: 12px;
             cursor: pointer;
-            transition: transform 0.2s;
         }
         
-        .yellow { background: #fef3bd; }
-        .pink { background: #ffd1dc; }
-        .blue { background: #cce5ff; }
-        .green { background: #d4edda; }
-        .lavender { background: #e6e6fa; }
-        .peach { background: #ffe5d9; }
+        .note.yellow { background: #fef3bd; color: #333; }
+        .note.pink { background: #ffd1dc; color: #333; }
+        .note.blue { background: #cce5ff; color: #333; }
+        .note.green { background: #d4edda; color: #333; }
+        .note.lavender { background: #e6e6fa; color: #333; }
+        .note.peach { background: #ffe5d9; color: #333; }
+        .note.orange { background: #ffddc1; color: #333; }
+        .note.mint { background: #c1ffdd; color: #333; }
         
-        /* Dark scheme */
-        body.dark .yellow { background: #7a7a4b; color: #fff; }
-        body.dark .pink { background: #7a4b5b; color: #fff; }
-        body.dark .blue { background: #4b5b7a; color: #fff; }
-        body.dark .green { background: #4b7a5b; color: #fff; }
-        body.dark .lavender { background: #5b5b7a; color: #fff; }
-        body.dark .peach { background: #7a6b4b; color: #fff; }
+        body.dark-mode .note.yellow { background: #8B8B4B; color: #fff; }
+        body.dark-mode .note.pink { background: #8B4B5B; color: #fff; }
+        body.dark-mode .note.blue { background: #4B5B8B; color: #fff; }
+        body.dark-mode .note.green { background: #4B8B5B; color: #fff; }
         
-        /* Delete button on notes */
         .note .del { 
             display: none; position: absolute; top: -5px; right: -5px; 
             width: 20px; height: 20px; background: #e74c3c; color: white; 
@@ -50,100 +45,39 @@
         }
         .note.show-del .del { display: flex; align-items: center; justify-content: center; }
         
-        /* Bottom buttons */
-        #addBtn {
-            position: fixed; bottom: 15px; right: 15px;
-            width: 55px; height: 55px;
-            background: #27ae60; border-radius: 50%; border: none;
-            color: white; font-size: 28px; font-weight: bold;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-        }
+        #addBtn { position: fixed; bottom: 15px; right: 15px; width: 55px; height: 55px; background: #27ae60; border-radius: 50%; border: none; color: white; font-size: 28px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; }
+        #adminBtn { position: fixed; bottom: 15px; left: 15px; width: 55px; height: 55px; background: #9b59b6; border-radius: 50%; border: none; color: white; font-size: 12px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; }
+        #exitBtn { position: fixed; bottom: 15px; left: 15px; width: 55px; height: 55px; background: #e74c3c; border-radius: 50%; border: none; color: white; font-size: 11px; font-weight: bold; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; display: none; }
+        #settingsBtn { position: fixed; bottom: 80px; left: 15px; width: 55px; height: 55px; background: #3498db; border-radius: 50%; border: none; color: white; font-size: 20px; box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100; display: none; }
         
-        #adminBtn {
-            position: fixed; bottom: 15px; left: 15px;
-            width: 55px; height: 55px;
-            background: #9b59b6; border-radius: 50%; border: none;
-            color: white; font-size: 12px; font-weight: bold;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-        }
-        
-        #exitAdminBtn {
-            position: fixed; bottom: 15px; left: 15px;
-            width: 55px; height: 55px;
-            background: #e74c3c; border-radius: 50%; border: none;
-            color: white; font-size: 11px; font-weight: bold;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-            display: none;
-        }
-        
-        #settingsBtn {
-            position: fixed; bottom: 80px; left: 15px;
-            width: 55px; height: 55px;
-            background: #3498db; border-radius: 50%; border: none;
-            color: white; font-size: 20px;
-            box-shadow: 2px 2px 10px rgba(0,0,0,0.3); z-index: 100;
-            display: none;
-        }
-        
-        /* Modal overlay */
-        .modal {
-            display: none;
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.85);
-            z-index: 200;
-            align-items: center; justify-content: center;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 200; align-items: center; justify-content: center; }
         .modal.open { display: flex; }
         
-        .modal-content {
-            background: white; padding: 20px; border-radius: 15px;
-            width: 85%; max-width: 300px;
-        }
+        .modal-content { background: white; padding: 20px; border-radius: 15px; width: 85%; max-width: 300px; }
+        .modal-content h2 { margin: 0 0 15px 0; text-align: center; font-size: 18px; }
         
-        .modal h2 { margin: 0 0 15px 0; text-align: center; font-size: 18px; }
-        
-        /* Input */
-        textarea, input[type="text"], input[type="password"] {
-            width: 100%; padding: 12px; font-size: 15px;
-            border: 2px solid #ddd; border-radius: 8px;
-            box-sizing: border-box; margin-bottom: 10px;
-        }
+        textarea, input[type=text], input[type=password] { width: 100%; padding: 12px; font-size: 15px; border: 2px solid #ddd; border-radius: 8px; box-sizing: border-box; margin-bottom: 10px; }
         textarea { height: 80px; resize: none; font-family: inherit; }
         textarea:focus, input:focus { outline: none; border-color: #3498db; }
         
-        /* Keyboard */
         .keyboard { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; margin: 10px 0; }
-        .key {
-            padding: 10px 0; background: #eee; border: none; border-radius: 5px;
-            font-size: 12px; cursor: pointer; text-align: center;
-        }
+        .key { padding: 10px 0; background: #eee; border: none; border-radius: 5px; font-size: 12px; cursor: pointer; text-align: center; }
         .key:active { background: #ccc; }
         .key.wide { grid-column: span 5; }
         .key.save { background: #27ae60; color: white; }
         .key.back { background: #e74c3c; color: white; }
         
-        /* Buttons */
         .btn-row { display: flex; gap: 8px; margin-top: 10px; }
-        .btn {
-            flex: 1; padding: 12px; border: none; border-radius: 8px;
-            font-size: 14px; font-weight: bold; cursor: pointer;
-        }
+        .btn { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; }
         .btn-gray { background: #ddd; color: #333; }
         .btn-green { background: #27ae60; color: white; }
         .btn-purple { background: #9b59b6; color: white; }
         
-        /* Settings rows */
         .setting-row { margin-bottom: 12px; }
         .setting-row label { display: block; font-size: 12px; color: #666; margin-bottom: 4px; }
         .setting-row select { width: 100%; padding: 10px; font-size: 14px; border: 2px solid #ddd; border-radius: 8px; }
         
-        /* Toast */
-        #toast {
-            position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.85); color: white;
-            padding: 12px 24px; border-radius: 25px; font-size: 14px;
-            display: none; z-index: 300;
-        }
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; display: none; z-index: 300; }
         #toast.show { display: block; }
     </style>
 </head>
@@ -152,7 +86,7 @@
     
     <button id="addBtn">+</button>
     <button id="adminBtn">ADMIN</button>
-    <button id="exitAdminBtn">EXIT</button>
+    <button id="exitBtn">EXIT</button>
     <button id="settingsBtn">⚙</button>
     
     <!-- Note Modal -->
@@ -163,7 +97,7 @@
             <div class="keyboard">
                 <button class="key" data="q">q</button><button class="key" data="w">w</button><button class="key" data="e">e</button><button class="key" data="r">r</button><button class="key" data="t">t</button><button class="key" data="y">y</button><button class="key" data="u">u</button><button class="key" data="i">i</button><button class="key" data="o">o</button>
                 <button class="key" data="p">p</button><button class="key" data="a">a</button><button class="key" data="s">s</button><button class="key" data="d">d</button><button class="key" data="f">f</button><button class="key" data="g">g</button><button class="key" data="h">h</button><button class="key" data="j">j</button><button class="key" data="k">k</button><button class="key" data="l">l</button>
-                <button class="key back" data="back">⌫</button><button class="key" data="z">z</button><button class="key" data="x">x</button><button class="key" data="c">c</button><button class="key" data="v">v</button><button class="key" data="b">b</button><button class="key" data="n">n</button><button class="key" data="m">m</button><button class="key" data="m">m</button>
+                <button class="key back" data="back">⌫</button><button class="key" data="z">z</button><button class="key" data="x">x</button><button class="key" data="c">c</button><button class="key" data="v">v</button><button class="key" data="b">b</button><button class="key" data="n">n</button><button class="key" data="m">m</button>
                 <button class="key wide" data="space">space</button><button class="key save" data="save">SAVE</button>
             </div>
             <div class="btn-row">
@@ -200,24 +134,29 @@
             </div>
             
             <div class="setting-row">
-                <label>Color Scheme</label>
-                <select id="schemeSelect">
-                    <option value="default" selected>Default</option>
-                    <option value="dark">Dark</option>
-                    <option value="pastel">Pastel</option>
-                    <option value="bright">Bright</option>
+                <label>Background Color</label>
+                <select id="bgSelect">
+                    <option value="#7a4a1e">Wood Brown</option>
+                    <option value="#8B4513">Saddle Brown</option>
+                    <option value="#A0522D">Sienna</option>
+                    <option value="#2c3e50">Dark Blue</option>
+                    <option value="#34495e">Slate Gray</option>
+                    <option value="#1a1a2e">Midnight</option>
+                    <option value="#2d3436">Charcoal</option>
+                    <option value="#636e72">Gray</option>
+                    <option value="#000000">Black</option>
+                    <option value="#27ae60">Forest Green</option>
+                    <option value="#16a085">Teal</option>
+                    <option value="#e74c3c">Crimson</option>
+                    <option value="#8e44ad">Purple</option>
                 </select>
             </div>
             
             <div class="setting-row">
-                <label>Background</label>
-                <select id="bgSelect">
-                    <option value="#7a4a1e" selected>Wood Brown</option>
-                    <option value="#2c3e50">Dark Blue</option>
-                    <option value="#34495e">Slate</option>
-                    <option value="#1a1a2e">Midnight</option>
-                    <option value="#2d3436">Charcoal</option>
-                    <option value="#000000">Black</option>
+                <label>Color Scheme</label>
+                <select id="schemeSelect">
+                    <option value="default" selected>Default (Light)</option>
+                    <option value="dark-mode">Dark</option>
                 </select>
             </div>
             
@@ -232,7 +171,7 @@
             </div>
             
             <div class="setting-row">
-                <label>GitHub Token (for sync)</label>
+                <label>GitHub Token</label>
                 <input type="password" id="tokenInput" placeholder="ghp_xxx...">
             </div>
             
@@ -246,324 +185,322 @@
     <div id="toast"></div>
 
     <script>
-    // === CONFIG ===
-    const PIN = '1234';
-    const COLORS = ['yellow','pink','blue','green','lavender','peach'];
-    const SIZES = { small: 70, medium: 100, large: 130, xlarge: 160 };
-    
-    // === STATE ===
-    let notes = [];
-    let adminMode = false;
-    let settings = { size: 'medium', scheme: 'default', bg: '#7a4a1e', font: 'sans-serif' };
-    
-    // === GRID (no overlap) ===
-    let gridCols = 3, gridRows = 5;
-    let cellW, cellH;
-    let usedCells = {};
-    
-    function initGrid() {
-        cellW = window.innerWidth / gridCols;
-        cellH = (window.innerHeight - 150) / gridRows;
-        usedCells = {};
-    }
-    
-    function getFreePosition() {
-        let cells = [];
-        for (let r = 0; r < gridRows; r++) {
-            for (let c = 0; c < gridCols; c++) {
-                if (!usedCells[r + ',' + c]) cells.push({r, c});
+    (function() {
+        var PIN = '1234';
+        var COLORS = ['yellow','pink','blue','green','lavender','peach','orange','mint'];
+        var SIZES = { small: 70, medium: 100, large: 130, xlarge: 160 };
+        
+        var notes = [];
+        var adminMode = false;
+        var settings = { size: 'medium', scheme: 'default', bg: '#7a4a1e', font: 'sans-serif' };
+        
+        var gridCols = 3, gridRows = 5;
+        var cellW, cellH;
+        var usedCells = {};
+        
+        function initGrid() {
+            cellW = window.innerWidth / gridCols;
+            cellH = (window.innerHeight - 150) / gridRows;
+            usedCells = {};
+        }
+        
+        function getFreePosition() {
+            var cells = [];
+            for (var r = 0; r < gridRows; r++) {
+                for (var c = 0; c < gridCols; c++) {
+                    if (!usedCells[r + ',' + c]) cells.push({r: r, c: c});
+                }
             }
-        }
-        if (cells.length === 0) {
-            // All full, use random
-            return { x: 10 + Math.random() * (window.innerWidth - 120), y: 60 + Math.random() * (window.innerHeight - 200) };
-        }
-        let cell = cells[Math.floor(Math.random() * cells.length)];
-        usedCells[cell.r + ',' + cell.c] = true;
-        return {
-            x: cell.c * cellW + 5 + Math.random() * 20,
-            y: cell.r * cellH + 50 + Math.random() * 20
-        };
-    }
-    
-    function markCellUsed(x, y) {
-        let c = Math.floor(x / cellW);
-        let r = Math.floor((y - 50) / cellH);
-        if (r >= 0 && r < gridRows && c >= 0 && c < gridCols) {
-            usedCells[r + ',' + c] = true;
-        }
-    }
-    
-    // === INIT ===
-    function init() {
-        initGrid();
-        
-        // Load settings
-        try { let s = localStorage.getItem('psettings'); if (s) settings = JSON.parse(s); } catch(e) {}
-        
-        // Load notes
-        try { let n = localStorage.getItem('pnotes'); if (n) notes = JSON.parse(n); } catch(e) {}
-        
-        // Mark used cells
-        notes.forEach(n => markCellUsed(n.x, n.y));
-        
-        // Default notes
-        if (notes.length === 0) {
-            notes = [
-                { id: 1, text: 'Tap + for new', color: 'yellow', x: 10, y: 55 },
-                { id: 2, text: 'Tap ADMIN for settings', color: 'pink', x: 130, y: 60 }
-            ];
-            notes.forEach(n => markCellUsed(n.x, n.y));
-        }
-        
-        applySettings();
-        render();
-        loadFromWeb();
-        
-        setupEventListeners();
-    }
-    
-    // === UI ===
-    function applySettings() {
-        document.body.style.background = settings.bg;
-        document.body.style.fontFamily = settings.font;
-        document.body.className = settings.scheme === 'default' ? '' : settings.scheme;
-    }
-    
-    function render() {
-        const board = document.getElementById('board');
-        board.innerHTML = '';
-        
-        const size = SIZES[settings.size] || 100;
-        const fontSize = Math.max(10, size / 8);
-        
-        notes.forEach(note => {
-            const el = document.createElement('div');
-            el.className = 'note ' + note.color + (adminMode ? ' show-del' : '');
-            el.style.left = note.x + 'px';
-            el.style.top = note.y + 'px';
-            el.style.width = size + 'px';
-            el.style.height = size + 'px';
-            el.style.fontSize = fontSize + 'px';
-            el.innerHTML = note.text + '<button class="del" data-id="' + note.id + '">×</button>';
-            
-            if (adminMode) {
-                el.querySelector('.del').onclick = (e) => {
-                    e.stopPropagation();
-                    deleteNote(note.id);
-                };
+            if (cells.length === 0) {
+                return { x: 10 + Math.random() * (window.innerWidth - 120), y: 60 + Math.random() * (window.innerHeight - 200) };
             }
-            
-            board.appendChild(el);
-        });
-        
-        // Show/hide admin buttons
-        document.getElementById('adminBtn').style.display = adminMode ? 'none' : 'block';
-        document.getElementById('exitAdminBtn').style.display = adminMode ? 'block' : 'none';
-        document.getElementById('settingsBtn').style.display = adminMode ? 'block' : 'none';
-    }
-    
-    function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.className = 'show';
-        setTimeout(() => toast.className = '', 2500);
-    }
-    
-    function openModal(id) {
-        document.querySelectorAll('.modal').forEach(m => m.classList.remove('open'));
-        document.getElementById(id).classList.add('open');
-    }
-    
-    function closeModal(id) {
-        document.getElementById(id).classList.remove('open');
-    }
-    
-    // === ACTIONS ===
-    function addNote() {
-        const input = document.getElementById('noteInput');
-        const text = input.value.trim();
-        if (!text) { showToast('Type something!'); return; }
-        
-        const pos = getFreePosition();
-        notes.push({
-            id: Date.now(),
-            text: text,
-            color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            x: pos.x,
-            y: pos.y
-        });
-        
-        saveNotes();
-        closeModal('noteModal');
-        render();
-        showToast('Saved!');
-        syncToWeb();
-    }
-    
-    function deleteNote(id) {
-        notes = notes.filter(n => n.id !== id);
-        saveNotes();
-        render();
-        showToast('Deleted');
-        syncToWeb();
-    }
-    
-    function toggleAdmin() {
-        if (adminMode) {
-            adminMode = false;
-            render();
-            showToast('Admin OFF');
-        } else {
-            openModal('pinModal');
-            document.getElementById('pinInput').value = '';
-            setTimeout(() => document.getElementById('pinInput').focus(), 100);
-        }
-    }
-    
-    function checkPin() {
-        const pin = document.getElementById('pinInput').value;
-        if (pin === PIN) {
-            adminMode = true;
-            closeModal('pinModal');
-            render();
-            showToast('Admin ON');
-        } else if (pin.length === 4) {
-            showToast('Wrong PIN');
-            document.getElementById('pinInput').value = '';
-        }
-    }
-    
-    function saveNotes() {
-        try { localStorage.setItem('pnotes', JSON.stringify(notes)); } catch(e) {}
-    }
-    
-    function saveSettings() {
-        try { localStorage.setItem('psettings', JSON.stringify(settings)); } catch(e) {}
-    }
-    
-    // === WEB SYNC ===
-    function syncToWeb() {
-        const token = localStorage.getItem('ptoken');
-        const gist = localStorage.getItem('pgist');
-        if (!token) return;
-        
-        const data = JSON.stringify({ notes: notes, settings: settings, version: 3 });
-        
-        if (gist) {
-            fetch('https://api.github.com/gists/' + gist, {
-                method: 'PATCH',
-                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ files: { 'notes.json': { content: data } } })
-            }).catch(() => {});
-        } else {
-            fetch('https://api.github.com/gists', {
-                method: 'POST',
-                headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ description: 'Post-it Notes', public: false, files: { 'notes.json': { content: data } } })
-            }).then(r => r.json()).then(d => {
-                localStorage.setItem('pgist', d.id);
-            }).catch(() => {});
-        }
-    }
-    
-    function loadFromWeb() {
-        const token = localStorage.getItem('ptoken');
-        const gist = localStorage.getItem('pgist');
-        if (!token || !gist) return;
-        
-        fetch('https://api.github.com/gists/' + gist, {
-            headers: { 'Authorization': 'token ' + token }
-        }).then(r => r.json()).then(d => {
-            if (d.files && d.files['notes.json']) {
-                try {
-                    const data = JSON.parse(d.files['notes.json'].content);
-                    if (data.settings) { settings = data.settings; saveSettings(); applySettings(); }
-                    if (data.notes && data.notes.length) {
-                        notes = data.notes;
-                        saveNotes();
-                        initGrid();
-                        notes.forEach(n => markCellUsed(n.x, n.y));
-                    }
-                } catch(e) {}
-            }
-        }).catch(() => {}).then(() => render());
-    }
-    
-    // === EVENTS ===
-    function setupEventListeners() {
-        // Add note
-        document.getElementById('addBtn').onclick = () => {
-            document.getElementById('noteInput').value = '';
-            openModal('noteModal');
-            setTimeout(() => document.getElementById('noteInput').focus(), 100);
-        };
-        
-        // Admin
-        document.getElementById('adminBtn').onclick = toggleAdmin;
-        document.getElementById('exitAdminBtn').onclick = toggleAdmin;
-        
-        // Settings
-        document.getElementById('settingsBtn').onclick = () => {
-            document.getElementById('sizeSelect').value = settings.size;
-            document.getElementById('schemeSelect').value = settings.scheme;
-            document.getElementById('bgSelect').value = settings.bg;
-            document.getElementById('fontSelect').value = settings.font;
-            document.getElementById('tokenInput').value = localStorage.getItem('ptoken') || '';
-            openModal('settingsModal');
-        };
-        
-        // Note modal
-        document.getElementById('noteCancelBtn').onclick = () => closeModal('noteModal');
-        
-        // Keyboard
-        document.querySelectorAll('.key').forEach(btn => {
-            btn.onclick = () => {
-                const input = document.getElementById('noteInput');
-                const key = btn.dataset.data;
-                if (key === 'back') input.value = input.value.slice(0, -1);
-                else if (key === 'save') addNote();
-                else if (key === 'space') input.value += ' ';
-                else input.value += key;
+            var cell = cells[Math.floor(Math.random() * cells.length)];
+            usedCells[cell.r + ',' + cell.c] = true;
+            return {
+                x: cell.c * cellW + 5 + Math.random() * 20,
+                y: cell.r * cellH + 50 + Math.random() * 20
             };
-        });
+        }
         
-        // PIN modal
-        document.getElementById('pinCancelBtn').onclick = () => closeModal('pinModal');
-        document.getElementById('pinOkBtn').onclick = checkPin;
-        document.getElementById('pinInput').oninput = function() {
-            if (this.value.length === 4) checkPin();
-        };
+        function markCellUsed(x, y) {
+            var c = Math.floor(x / cellW);
+            var r = Math.floor((y - 50) / cellH);
+            if (r >= 0 && r < gridRows && c >= 0 && c < gridCols) {
+                usedCells[r + ',' + c] = true;
+            }
+        }
         
-        // Settings modal
-        document.getElementById('settingsCancelBtn').onclick = () => closeModal('settingsModal');
-        document.getElementById('settingsSaveBtn').onclick = () => {
-            settings.size = document.getElementById('sizeSelect').value;
-            settings.scheme = document.getElementById('schemeSelect').value;
-            settings.bg = document.getElementById('bgSelect').value;
-            settings.font = document.getElementById('fontSelect').value;
+        function load() {
+            initGrid();
             
-            const token = document.getElementById('tokenInput').value.trim();
-            if (token) localStorage.setItem('ptoken', token);
+            // Load settings
+            try { var s = localStorage.getItem('psettings'); if (s) settings = JSON.parse(s); } catch(e) {}
             
-            saveSettings();
+            // Load notes
+            try { var n = localStorage.getItem('pnotes'); if (n) notes = JSON.parse(n); } catch(e) {}
+            
+            // Mark used cells
+            notes.forEach(function(note) { markCellUsed(note.x, note.y); });
+            
+            // Default notes
+            if (notes.length === 0) {
+                notes = [
+                    { id: 1, text: 'Tap + for new', color: 'yellow', x: 10, y: 55 },
+                    { id: 2, text: 'Tap ADMIN for settings', color: 'pink', x: 130, y: 60 }
+                ];
+                notes.forEach(function(note) { markCellUsed(note.x, note.y); });
+            }
+            
             applySettings();
-            closeModal('settingsModal');
+            render();
+            loadFromWeb();
+            
+            setupEvents();
+        }
+        
+        function applySettings() {
+            document.body.style.background = settings.bg;
+            document.body.style.fontFamily = settings.font;
+            document.body.className = settings.scheme;
+        }
+        
+        function render() {
+            var board = document.getElementById('board');
+            board.innerHTML = '';
+            
+            var size = SIZES[settings.size] || 100;
+            var fontSize = Math.max(10, size / 8);
+            
+            notes.forEach(function(note) {
+                var el = document.createElement('div');
+                el.className = 'note ' + note.color + (adminMode ? ' show-del' : '');
+                el.style.left = note.x + 'px';
+                el.style.top = note.y + 'px';
+                el.style.width = size + 'px';
+                el.style.height = size + 'px';
+                el.style.fontSize = fontSize + 'px';
+                el.innerHTML = '<span>' + note.text + '</span><button class="del" data-id="' + note.id + '">×</button>';
+                
+                if (adminMode) {
+                    el.querySelector('.del').onclick = function(e) {
+                        e.stopPropagation();
+                        deleteNote(note.id);
+                    };
+                }
+                
+                board.appendChild(el);
+            });
+            
+            // Toggle buttons
+            document.getElementById('adminBtn').style.display = adminMode ? 'none' : 'block';
+            document.getElementById('exitBtn').style.display = adminMode ? 'block' : 'none';
+            document.getElementById('settingsBtn').style.display = adminMode ? 'block' : 'none';
+        }
+        
+        function showToast(msg) {
+            var toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.className = 'show';
+            setTimeout(function() { toast.className = ''; }, 2500);
+        }
+        
+        function openModal(id) {
+            document.querySelectorAll('.modal').forEach(function(m) { m.classList.remove('open'); });
+            document.getElementById(id).classList.add('open');
+        }
+        
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+        
+        function addNote() {
+            var input = document.getElementById('noteInput');
+            var text = input.value.trim();
+            if (!text) { showToast('Type something!'); return; }
+            
+            var pos = getFreePosition();
+            notes.push({
+                id: Date.now(),
+                text: text,
+                color: COLORS[Math.floor(Math.random() * COLORS.length)],
+                x: pos.x,
+                y: pos.y
+            });
+            
+            saveNotes();
+            closeModal('noteModal');
             render();
             showToast('Saved!');
             syncToWeb();
-        };
+        }
         
-        // Close modals on background click
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.onclick = (e) => {
-                if (e.target === modal) modal.classList.remove('open');
+        function deleteNote(id) {
+            notes = notes.filter(function(n) { return n.id !== id; });
+            saveNotes();
+            render();
+            showToast('Deleted');
+            syncToWeb();
+        }
+        
+        function toggleAdmin() {
+            if (adminMode) {
+                adminMode = false;
+                render();
+                showToast('Admin OFF');
+            } else {
+                openModal('pinModal');
+                document.getElementById('pinInput').value = '';
+                setTimeout(function() { document.getElementById('pinInput').focus(); }, 100);
+            }
+        }
+        
+        function checkPin() {
+            var pin = document.getElementById('pinInput').value;
+            if (pin === PIN) {
+                adminMode = true;
+                closeModal('pinModal');
+                render();
+                showToast('Admin ON');
+            } else if (pin.length === 4) {
+                showToast('Wrong PIN');
+                document.getElementById('pinInput').value = '';
+            }
+        }
+        
+        function saveNotes() {
+            try { localStorage.setItem('pnotes', JSON.stringify(notes)); } catch(e) {}
+        }
+        
+        function saveSettings() {
+            try { localStorage.setItem('psettings', JSON.stringify(settings)); } catch(e) {}
+        }
+        
+        function syncToWeb() {
+            var token = localStorage.getItem('ptoken');
+            var gist = localStorage.getItem('pgist');
+            if (!token) return;
+            
+            var data = JSON.stringify({ notes: notes, settings: settings, version: 4 });
+            
+            if (gist) {
+                fetch('https://api.github.com/gists/' + gist, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ files: { 'notes.json': { content: data } } })
+                }).catch(function() {});
+            } else {
+                fetch('https://api.github.com/gists', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'token ' + token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ description: 'Post-it Notes', public: false, files: { 'notes.json': { content: data } } })
+                }).then(function(r) { return r.json(); }).then(function(d) {
+                    localStorage.setItem('pgist', d.id);
+                }).catch(function() {});
+            }
+        }
+        
+        function loadFromWeb() {
+            var token = localStorage.getItem('ptoken');
+            var gist = localStorage.getItem('pgist');
+            if (!token || !gist) return;
+            
+            fetch('https://api.github.com/gists/' + gist, {
+                headers: { 'Authorization': 'token ' + token }
+            }).then(function(r) { return r.json(); }).then(function(d) {
+                if (d.files && d.files['notes.json']) {
+                    try {
+                        var data = JSON.parse(d.files['notes.json'].content);
+                        if (data.settings) {
+                            settings = data.settings;
+                            saveSettings();
+                            applySettings();
+                        }
+                        if (data.notes && data.notes.length > 0) {
+                            notes = data.notes;
+                            saveNotes();
+                            initGrid();
+                            notes.forEach(function(note) { markCellUsed(note.x, note.y); });
+                        }
+                    } catch(e) {}
+                }
+            }).catch(function() {}).then(function() { render(); });
+        }
+        
+        function setupEvents() {
+            // Add note
+            document.getElementById('addBtn').onclick = function() {
+                document.getElementById('noteInput').value = '';
+                openModal('noteModal');
+                setTimeout(function() { document.getElementById('noteInput').focus(); }, 100);
             };
-        });
-    }
-    
-    // Start
-    init();
+            
+            // Admin
+            document.getElementById('adminBtn').onclick = toggleAdmin;
+            document.getElementById('exitBtn').onclick = toggleAdmin;
+            
+            // Settings
+            document.getElementById('settingsBtn').onclick = function() {
+                document.getElementById('sizeSelect').value = settings.size;
+                document.getElementById('schemeSelect').value = settings.scheme;
+                document.getElementById('bgSelect').value = settings.bg;
+                document.getElementById('fontSelect').value = settings.font;
+                document.getElementById('tokenInput').value = localStorage.getItem('ptoken') || '';
+                openModal('settingsModal');
+            };
+            
+            // Note modal
+            document.getElementById('noteCancelBtn').onclick = function() { closeModal('noteModal'); };
+            
+            // Keyboard
+            document.querySelectorAll('.key').forEach(function(btn) {
+                btn.onclick = function(e) {
+                    e.preventDefault();
+                    var input = document.getElementById('noteInput');
+                    var key = btn.getAttribute('data');
+                    if (key === 'back') input.value = input.value.slice(0, -1);
+                    else if (key === 'save') addNote();
+                    else if (key === 'space') input.value += ' ';
+                    else input.value += key;
+                };
+            });
+            
+            // PIN modal
+            document.getElementById('pinCancelBtn').onclick = function() { closeModal('pinModal'); };
+            document.getElementById('pinOkBtn').onclick = checkPin;
+            document.getElementById('pinInput').oninput = function() {
+                if (this.value.length === 4) checkPin();
+            };
+            
+            // Settings modal
+            document.getElementById('settingsCancelBtn').onclick = function() { closeModal('settingsModal'); };
+            document.getElementById('settingsSaveBtn').onclick = function() {
+                settings.size = document.getElementById('sizeSelect').value;
+                settings.scheme = document.getElementById('schemeSelect').value;
+                settings.bg = document.getElementById('bgSelect').value;
+                settings.font = document.getElementById('fontSelect').value;
+                
+                var token = document.getElementById('tokenInput').value.trim();
+                if (token) localStorage.setItem('ptoken', token);
+                
+                saveSettings();
+                applySettings();
+                closeModal('settingsModal');
+                render();
+                showToast('Saved!');
+                syncToWeb();
+            };
+            
+            // Close modals on background click
+            document.querySelectorAll('.modal').forEach(function(modal) {
+                modal.onclick = function(e) {
+                    if (e.target === modal) modal.classList.remove('open');
+                };
+            });
+        }
+        
+        // Start
+        load();
+    })();
     </script>
 </body>
 </html>
